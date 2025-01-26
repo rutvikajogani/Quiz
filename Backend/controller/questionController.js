@@ -86,3 +86,81 @@ export const moveQuestion = async (req, res) => {
         })
     }
 }
+export const listQuestions = async (req, res) => {
+    try {
+        // Fetch all questions, excluding any sensitive fields like 'answers' or 'userData'
+        const questions = await questionModel.find()
+    
+        return res.status(200).json({
+            message: 'Questions list retrieved successfully',
+            status: true,
+            data: questions
+        });
+    } catch (err) {
+        console.error(err); // Log error for debugging purposes
+        return res.status(500).json({
+            message: 'Internal Server Error',
+            status: false,
+            data: null
+        });
+    }
+};
+
+export const deleteQuestion = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const question = await questionModel.findByIdAndDelete(id);
+        if (!question) {
+            return res.status(404).json({
+                message: 'Question not found..!',
+                status: false,
+                data: null
+            })
+        }
+        return res.json({
+            message: 'Question deleted',
+            status: false,
+            data: null
+        })
+        
+    } catch (err) {
+        res.status(500).json({
+            message: 'Internal Server Error',
+            status: false,
+            data: null
+        })
+    }
+}
+
+export const updateQuestion = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const question = await questionModel.findById(id);
+        if (!question) {
+            return res.status(404).json({
+                message: 'Question not found..!',
+                status: false,
+                data: null
+            })
+        }
+        for (const key in req.body) {
+            question[key] = req.body[key]
+        }
+
+        await question.save();
+
+        return res.json({
+            message: 'Question updated',
+            status: true,
+            data: question
+        })
+        
+    } catch (err) {
+        console.error(err); // Log error for debugging purposes
+        return res.status(500).json({
+            message: 'Internal Server Error',
+            status: false,
+            data: null
+        });
+    }
+}

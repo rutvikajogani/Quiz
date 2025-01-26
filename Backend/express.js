@@ -13,8 +13,7 @@ app.use(express.json());
 app.use(cors());
 app.use('/api/v1/user', userRouter);
 app.use('/api/v1/Quiz', quizRouter);
-app.use('/api/v1/question', questionRouter 
-);
+app.use('/api/v1/question', questionRouter );
 
 app.listen(5000, () => {
     console.log('Server is running on port 5000');

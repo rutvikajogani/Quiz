@@ -152,3 +152,78 @@ export const banUnbanUser = async (req, res) => {
         })
     }
 }
+export const listUsers = async (req, res) => {
+    try {
+
+        const users = await userModel.find({}, { password: 0 });
+        return res.json({
+            message: 'Users List',
+            status: true,
+            data: users
+        })
+    } catch (err) {
+        return res.status(500).json({
+            message: 'Internal Server Error',
+            status: false,
+            data: null
+        })
+    }
+}
+export  const deleteUser =async(req, res) => {
+    try {
+        const { id } = req.params;
+        const user = await userModel.findByIdAndDelete(id);
+        if (!user) {
+            return res.status(404).json({
+                message: 'User not found..!',
+                status: false,
+                data: null
+            })
+        }
+        return res.json({
+            message: 'User deleted',
+            status: false,
+            data: null
+        })
+        
+    } catch (err) {
+        res.status(500).json({
+            message: 'Internal Server Error',
+            status: false,
+            data: null
+        })
+    }
+}
+ export const updateUser = async (req, res) => {
+    try {
+       const id = req.params.id
+
+       const user =await userModel.findById(id);
+       if (!user) {
+        return res.status(404).json({
+            message: 'User not found..!',
+            status: false,
+            data: null
+        })}
+
+        for (const key in req.body) {
+            user[key] = req.body[key]
+        }
+        await user.save();
+        return res.json({
+            message: 'User updated',
+            data: user,
+            status: true
+        })
+
+   
+
+    } catch (err) {
+        res.status(500).json({
+            message: 'Internal Server Error',
+            status: false,
+            data: null
+        })
+    }
+}
+

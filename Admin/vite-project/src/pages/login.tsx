@@ -14,8 +14,8 @@ import { useNavigate } from "react-router-dom";
 
 const Login = () => {
     const [value, setValue] = useState({
-        email: "rutvijogani@gmail.com",
-        password: "1",
+        email: "",
+        password: "",
     });
     const [message, setMessage] = useState("");
     const [showPassword, setShowPassword] = useState(false);
@@ -32,7 +32,6 @@ const Login = () => {
     const inputHandler = (e: any) => {
         const { name, value } = e.target;
         setValue((prev) => ({ ...prev, [name]: value }));
-        
     };
 
     const togglePasswordVisibility = () => {
@@ -54,10 +53,10 @@ const Login = () => {
             <div className="hidden md:flex flex-col justify-center items-center p-8 w-1/2 h-full">
                 <h2 className="text-3xl font-bold mb-4">Welcome to Admin Panel</h2>
                 <img src={quiz} alt="Quiz Management" className="mb-4 max-w-full h-auto" />
-                <p className="text-lg text-center">Manage quizzes, track performance, and access powerful tools for efficient administration.</p>
+              
             </div>
 
-            <div className="bg-white shadow-lg rounded-lg p-8 max-w-md w-full md:w-1/2 flex flex-col items-center gap-5">
+            <div className="bg-white shadow-lg rounded-lg p-8 max-w-md  h-[45vh] w-full md:w-1/2 flex flex-col items-center gap-5">
                 <h1 className="text-2xl font-semibold text-gray-800">Login</h1>
                 <Input
                     type="text"
@@ -91,6 +90,11 @@ const Login = () => {
                 >
                     Login
                 </Button>
+                <div className="text-center mt-4">
+                    <p>Don't have an account? <a href="/register">Register now</a></p>
+                    </div>
+                    
+    
             </div>
 
             {message !== "" && (

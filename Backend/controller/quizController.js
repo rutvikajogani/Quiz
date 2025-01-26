@@ -6,7 +6,7 @@ export const allQuizList = async (req, res) => {
 
         const quiz = await quizModel.find();
 
-        return res.json({
+        return res.json({status:true,message: "quiz_fetch",
             data: quiz
         })
 
@@ -50,6 +50,8 @@ export const singleQuizList = async (req, res) => {
         }
 
         return res.json({
+            status: true,
+            message: "quiz_fetch",
             data: quiz
         })
     } catch (err) {
