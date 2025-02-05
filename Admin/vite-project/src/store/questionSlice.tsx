@@ -44,7 +44,7 @@ export const questionSlice = createSlice({
 export const { setQuestions } = questionSlice.actions;
 
 // Fetch questions based on quizId
-export const fetchQuestions = (quizId: string) => async (dispatch: any) => {
+export const fetchQuestions = () => async (dispatch: any) => {
     try {
         const response = await axios.get("http://localhost:5000/api/v1/Question/list", {
             headers: {
@@ -61,7 +61,23 @@ export const fetchQuestions = (quizId: string) => async (dispatch: any) => {
     } catch (err: any) {
         console.error("Failed to fetch questions", err);
     }
-};
+}; 
+
+export const DeleteQuestion =(id: string) => async (dispatch: any) => {
+    try {
+        const response = await axios.delete(`http://localhost:5000/api/v1/question/delete/${id}`, {
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem('token')!}`
+            }
+        });
+        
+        if (response.data.status) {
+            dispatch(fetchQuestions())
+        }
+    } catch (err: any) {
+        return { status: true, message: err.response.data.message }
+    }
+}
 
 
 // Export the reducer to be used in the store

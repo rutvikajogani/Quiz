@@ -1,84 +1,84 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchQuestions } from '@/store/questionSlice'; // Correct path to your slice
-import { RootState } from '@/store/store'; // Assuming you have a RootState type for the store
+import { fetchQuestions, DeleteQuestion } from '@/store/questionSlice';
+import { Button } from "@/components/ui/button";
 
 export const Question = () => {
-    const dispatch = useDispatch();
-    const questions = useSelector((state: RootState) => state.question.questions);
+    const dispatch: any = useDispatch();
+    const questions = useSelector((state: any) => state.question.questions);
 
     useEffect(() => {
-        dispatch(fetchQuestions()); // Pass the quizId correctly
+        dispatch(fetchQuestions()); // Fetch questions on component load
     }, [dispatch]);
 
-    console.log("Questions from Redux:", questions); // Log questions for debugging
+    const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+    const [isEditDialogOpen, setIsEditDialogOpen] = useState(false); // Add state for Edit Dialog
+    const [userId, setUserId] = useState<string | null>(null);
 
-    const handleEdit = (id: string) => {
-        console.log("Edit button clicked for question:", id);
-        // Add your edit logic here
+    const handleDelete = (questionId: string) => {
+        setIsDeleteDialogOpen(true);
+        setUserId(questionId);
     };
 
-    const handleDelete = (id: string) => {
-        console.log("Delete button clicked for question:", id);
-        // Add your delete logic here
+    const handleConfirmDelete = () => {
+        if (userId) {
+            console.log('Confirm delete for question ID:', userId); // Verify ID
+            dispatch(DeleteQuestion(userId)); // Dispatch delete action
+            dispatch(fetchQuestions()); // Refetch questions after deletion
+            setIsDeleteDialogOpen(false); // Close the delete dialog
+        }
+    };
+
+    const handleEdit = (questionId: string) => {
+        setIsEditDialogOpen(true);
+        setUserId(questionId);
     };
 
     return (
         <div className="p-8 space-y-4">
             <h1 className="text-3xl font-semibold text-center text-gray-700 mb-6">Questions</h1>
-            {questions.map((question, index) => (
-                <div
-                    key={index}
-                    className="bg-white rounded-lg shadow-md p-6 border border-gray-200"
-                >
-                    <div className="flex justify-between">
-                        <h2 className="text-xl font-bold text-gray-800">{question.title}</h2>
-                        <p className="text-sm text-gray-600">Type: {question.type}</p>
-                    </div>
+            <div className="flex flex-col gap-5">
+                {questions.map((question: any, index: number) => (
+                    <div key={index} className="p-4 border rounded shadow">
+                        <h2 className="text-xl font-medium">{question.title}</h2>
 
-                    <div className="space-y-2">
-                        {question.options && question.options.length > 0 ? (
-                            question.options.map((option) => (
-                                <div
-                                    key={option._id}
-                                    className="flex items-center space-x-2 p-3 bg-gray-50 rounded-lg shadow-sm hover:bg-gray-100 transition duration-200"
-                                >
-                                    <input
-                                        type="radio"
-                                        name={`question-${index}`} // Ensure unique name for each question
-                                        value={option._id} // Use option._id as the value
-                                        className="h-5 w-5 text-blue-600"
-                                    />
-                                    <label className="text-sm text-gray-700">{option.title}</label>
-                                </div>
-                            ))
-                        ) : (
-                            <p className="text-sm text-red-500">No options available</p> // Fallback if no options
-                        )}
+                        {/* Display only the correct option */}
+                        {question.options
+                            .filter((option: any) => option.isCorrect) // Filter correct option
+                            .map((correctOption: any, optIndex: number) => (
+                                <p key={optIndex} className="text-green-600 font-bold">
+                                    Correct Answer: {correctOption.title}
+                                </p>
+                            ))}
+                        
+                        <div className="flex justify-end gap-2 mt-4">
+                            <Button variant="outline" onClick={() => handleEdit(question.id)}>
+                                Edit
+                            </Button>
+                            <Button onClick={() => handleDelete(question._id)}>
+                                Delete
+                            </Button>
+                        </div>
                     </div>
+                ))}
+            </div>
 
-                    <div className="flex justify-between mt-4">
-                        <p className="text-sm text-gray-600">Time: {question.time} seconds</p>
-                        <p className="text-sm text-gray-600">Points: {question.point}</p>
-                    </div>
-
-                    {/* Edit and Delete Buttons */}
-                    <div className="flex justify-end space-x-4 mt-4">
-                        <button
-                            onClick={() => handleEdit(question._id)}
-                            className="bg-yellow-500 hover:bg-yellow-600 text-white py-1 px-4 rounded-lg text-sm shadow"
-                        >
-                            Edit
-                        </button>
-                        <button
-                            onClick={() => handleDelete(question._id)}
-                            className="bg-red-500 hover:bg-red-600 text-white py-1 px-4 rounded-lg text-sm shadow"
-                        >
-                            Delete
-                        </button>
+            {isDeleteDialogOpen && (
+                <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+                    <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
+                        <h2 className="text-lg font-bold mb-4">Delete Question</h2>
+                        <p className="mb-4">Are you sure you want to delete this question?</p>
+                        <div className="flex justify-end gap-2">
+                            <Button variant="outline" onClick={() => setIsDeleteDialogOpen(false)}>
+                                Cancel
+                            </Button>
+                            <Button variant="destructive" onClick={handleConfirmDelete}>
+                                Confirm Delete
+                            </Button>
+                        </div>
                     </div>
                 </div>
-            ))}
+            )}
         </div>
     );
 };

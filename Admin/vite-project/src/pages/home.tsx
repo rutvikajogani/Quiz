@@ -68,11 +68,11 @@ const Home = () => {
   };
 
   const handleConfirmDelete = () => {
-    
+    if (userId) {
       dispatch(DeleteUser(userId));
       dispatch(getUserList());
       setIsDeleteDialogOpen(false);
-    
+    }
   };
 
   return (

@@ -120,7 +120,7 @@ export const deleteQuestion = async (req, res) => {
         return res.json({
             message: 'Question deleted',
             status: false,
-            data: null
+            data: question
         })
         
     } catch (err) {
